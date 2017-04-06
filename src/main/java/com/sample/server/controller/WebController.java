@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
+//@RequestMapping("/controller")
 public class WebController {
 
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public @ResponseBody String getHello(ModelMap map) {
-        return "Hello Dan";
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public @ResponseBody String getHello(ModelMap model) {
+        return "Hello, Dan";
     }
 }
