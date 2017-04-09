@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.Resource;
@@ -19,7 +21,7 @@ import java.util.Properties;
 @Configuration
 @EnableJpaRepositories("com.sample.server.repository")
 @EnableTransactionManagement
-@PropertySource(value = "file:db.properties")
+@PropertySource(value = "classpath:db.properties")
 //@ComponentScans("com.sample.server")
 public class DatabaseConfig {
     @Resource
@@ -35,6 +37,33 @@ public class DatabaseConfig {
         return em;
     }
 
+    @Bean
+    public DataSource dataSource() {
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl(env.getRequiredProperty("db.url"));
+        ds.setDriverClassName(env.getRequiredProperty("db.driver"));
+        ds.setUsername(env.getRequiredProperty("db.username"));
+        ds.setPassword(env.getRequiredProperty("db.password"));
+
+//        ds.setInitialSize(Integer.valueOf(env.getRequiredProperty("db.initialSize")));
+//        ds.setMinIdle(Integer.valueOf(env.getRequiredProperty("db.minIdle")));
+//        ds.setMaxIdle(Integer.valueOf(env.getRequiredProperty("db.maxIdle")));
+//        ds.setTimeBetweenEvictionRunsMillis(Long.valueOf(env.getRequiredProperty("db.timeBetweenEvictionRunsMillis")));
+//        ds.setMinEvictableIdleTimeMillis(Long.valueOf(env.getRequiredProperty("db.minEvictableIdleTimeMillis")));
+//        ds.setTestOnBorrow(Boolean.valueOf(env.getRequiredProperty("db.testOnBorrow")));
+//        ds.setValidationQuery(env.getRequiredProperty("db.validationQuery"));
+
+        return ds;
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager() {
+        JpaTransactionManager manager = new JpaTransactionManager();
+        manager.setEntityManagerFactory(entityManagerFactory().getObject());
+
+        return manager;
+    }
+
     private Properties getHibernateProperties() {
         try {
             Properties properties = new Properties();
@@ -46,14 +75,5 @@ public class DatabaseConfig {
         }
     }
 
-    @Bean
-    public DataSource dataSource() {
-        BasicDataSource ds = new BasicDataSource();
-        ds.setUrl(env.getRequiredProperty("db.url"));
-        ds.setDriverClassName(env.getRequiredProperty("db.driver"));
-        ds.setUsername(env.getRequiredProperty("db.username"));
-        ds.setPassword(env.getRequiredProperty("db.password"));
 
-        return ds;
-    }
 }
