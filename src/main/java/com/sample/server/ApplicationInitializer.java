@@ -13,6 +13,8 @@ import javax.servlet.ServletRegistration;
 public class ApplicationInitializer implements WebApplicationInitializer{
     private static final String DISPATCHER = "dispatcher";
 
+
+
     public void onStartup(ServletContext servletContext) throws ServletException {
         AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
         ctx.register(WebConfig.class);

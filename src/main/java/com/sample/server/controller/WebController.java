@@ -1,29 +1,46 @@
 package com.sample.server.controller;
 
 import com.sample.server.entity.Users;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.sample.server.repository.UsersRepository;
+import com.sample.server.service.UsersService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 
 @RestController
-@RequestMapping("/server")
+//@RequestMapping("/server")
 public class WebController {
 
-    @RequestMapping(value = "/getUser", method = RequestMethod.GET)
+//    @Autowired
+//    private UsersRepository usersRepository;
+
+    @Autowired
+    private UsersService service;
+
+    @RequestMapping(value = "/getUsers", method = RequestMethod.GET)
     @ResponseBody
-    public Users getHello() {
-        return createUser();
+    public List<Users> getAllUsers() {
+        return service.getAll();
     }
 
-    private Users createUser() {
-        Users user = new Users();
-        user.setId(1);
-        user.setDate(new Date());
-        user.setLogin("User1");
-        user.setPassword("12345");
-        return user;
+    @RequestMapping(value = "/getUser/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Users getUser(@PathVariable long id) {
+        return service.getByID(id);
     }
+
+    @RequestMapping(value = "/saveUser", method = RequestMethod.POST)
+    @ResponseBody
+    public Users saveUser(@RequestBody Users user) {
+        return service.save(user);
+    }
+
+    @RequestMapping(value = "/delUser/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public void deleteUser(@PathVariable long id) {
+        service.remove(id);
+    }
+
 }
